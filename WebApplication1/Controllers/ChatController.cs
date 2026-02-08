@@ -10,30 +10,37 @@ namespace WebApplication1.Controllers
     public class ChatController : ControllerBase
     {
         private readonly DashboardRetrievalService _retrievalService;
+        private readonly AiResponseService _aiService;
 
-        public ChatController(DashboardRetrievalService retrievalService)
+        public ChatController(
+            DashboardRetrievalService retrievalService,
+            AiResponseService aiService)
         {
             _retrievalService = retrievalService;
+            _aiService = aiService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequest request)
         {
-            var retrievedAnswer =
-                await _retrievalService.RetrieveAnswerAsync(request.Message);
+            var retrieved = await _retrievalService.RetrieveAnswerAsync(request.Message);
 
-            if (retrievedAnswer != null)
+            if (retrieved == null)
             {
                 return Ok(new ChatResponse
                 {
-                    Reply = retrievedAnswer
+                    Reply = "I can answer questions about dashboard data (total, accepted, rejected)."
                 });
             }
 
+            var aiReply = await _aiService.GenerateAsync(retrieved, request.Message);
+
             return Ok(new ChatResponse
             {
-                Reply = "I can answer questions about dashboard data (total, accepted, rejected)."
+                Reply = aiReply
             });
         }
     }
+
+
 }

@@ -42,6 +42,8 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod());
 });
 builder.Services.AddScoped<DashboardRetrievalService>();
+builder.Services.AddScoped<AiResponseService>();
+builder.Services.AddScoped<GeminiAiResponseService>();
 
 var app = builder.Build(); using (var scope = app.Services.CreateScope())
 {
