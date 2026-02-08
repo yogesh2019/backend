@@ -30,9 +30,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular", policy =>
         policy
             .WithOrigins(
-                "http://localhost:4200",          // local dev
-                "https://backend-6xng.onrender.com" // deployed frontend
-            )
+    "http://localhost:4200",
+    "https://minidashboard-ostl.onrender.com"
+)
             .AllowAnyHeader()
             .AllowAnyMethod()
     );
