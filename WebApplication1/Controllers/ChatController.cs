@@ -23,21 +23,31 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<IActionResult> Chat([FromBody] ChatRequest request)
         {
-            var retrieved = await _retrievalService.RetrieveAnswerAsync(request.Message);
+            var selection = await _aiService.SelectQueryAsync(request.Message);
 
-            if (retrieved == null)
+            if (selection.QueryId == "NONE")
             {
                 return Ok(new ChatResponse
                 {
-                    Reply = "I can answer questions about dashboard data (total, accepted, rejected)."
+                    Reply = "I can answer questions about dashboard data (counts, status, latest record)."
                 });
             }
 
-            var aiReply = await _aiService.GenerateAsync(retrieved, request.Message);
+            var answer = await _retrievalService.RetrieveAnswerAsync(
+                selection.QueryId,
+                selection.Parameters);
+
+            if (answer == null)
+            {
+                return Ok(new ChatResponse
+                {
+                    Reply = "That query is not supported."
+                });
+            }
 
             return Ok(new ChatResponse
             {
-                Reply = aiReply
+                Reply = answer
             });
         }
     }
