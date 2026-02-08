@@ -31,7 +31,7 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(
                 "http://localhost:4200",          // local dev
-                "https://your-frontend-domain.com" // deployed frontend
+                "https://backend-6xng.onrender.com" // deployed frontend
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
