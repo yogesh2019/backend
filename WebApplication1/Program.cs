@@ -25,21 +25,17 @@ string connString = builder.Configuration.GetConnectionString("DefaultConnection
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
-        policy.AllowAnyOrigin()
-              .AllowAnyHeader()
-              .AllowAnyMethod());
-});
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAngular",
-        policy => policy
-            .WithOrigins("http://localhost:4200")
+    options.AddPolicy("AllowAngular", policy =>
+        policy
+            .WithOrigins(
+                "http://localhost:4200",          // local dev
+                "https://your-frontend-domain.com" // deployed frontend
+            )
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+    );
 });
 builder.Services.AddScoped<DashboardRetrievalService>();
 builder.Services.AddScoped<AiResponseService>();
@@ -93,11 +89,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAngular");
-
-app.UseCors();
 app.UseRouting();
-//app.UseHttpsRedirection();
+
+app.UseCors("AllowAngular");
 
 app.UseAuthorization();
 
