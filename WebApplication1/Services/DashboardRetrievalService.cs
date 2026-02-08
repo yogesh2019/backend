@@ -23,13 +23,17 @@
                     return $"There are {total} total records.";
 
                 case DashboardQueryCatalog.CountByStatus:
-                    if (!parameters.TryGetValue("status", out var status))
-                        return null;
+                    {
+                        if (!parameters.TryGetValue("status", out var status))
+                            return null;
 
-                    var count = await _context.DashboardRecords
-                        .CountAsync(x => x.Status == status);
+                        var normalizedStatus = status.Trim().ToLower();
 
-                    return $"{count} records are {status}.";
+                        var count = await _context.DashboardRecords
+                            .CountAsync(x => x.Status.ToLower() == normalizedStatus);
+
+                        return $"{count} records are {status}.";
+                    }
 
                 case DashboardQueryCatalog.LatestRecord:
                     var latest = await _context.DashboardRecords
